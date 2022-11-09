@@ -174,6 +174,235 @@ sudo firewall-cmd --reload
 <img width="428" alt="reload" src="https://user-images.githubusercontent.com/106919343/200679169-3d4c5c4f-3968-49c7-b7d5-f06c1fd71246.png">  
 
 Set the zones to their designated interfaces.  
+* Run the commands that set your eth interfaces to your zones.  
+Answer:  
+$ sudo firewall-cmd --zone=public --change-interface=eth0   
+$ sudo firewall-cmd --zone=web --change-interface=eth1  
+$ sudo firewall-cmd --zone=sales --change-interface=eth2  
+$ sudo firewall-cmd --zone=mail --change-interface=eth3  
+<img width="437" alt="change interface" src="https://user-images.githubusercontent.com/106919343/200882240-f36cf6bc-9c7e-4221-a517-fa17232b3ec4.png">  
+
+Add services to the active zones.  
+* Run the commands that add services to the public zone, the web zone, the sales zone, and the mail zone.  
+* public:  
+Answer:  
+$ sudo firewall-cmd --permanent --zone=public --add-service=http  
+$ sudo firewall-cmd --permanent --zone=public --add-service=https  
+$ sudo firewall-cmd --permanent --zone=public --add-service=pop3  
+$ sudo firewall-cmd --permanent --zone=public --add-service=smtp  
+<img width="482" alt="public" src="https://user-images.githubusercontent.com/106919343/200882600-167cec44-0912-4fdd-a2c9-b46dd5520a85.png">  
+
+* web:  
+Answer:  
+$ sudo firewall-cmd --permanent --zone=web --add-service=http  
+<img width="458" alt="web" src="https://user-images.githubusercontent.com/106919343/200882867-3c5fcb06-dae0-4b09-adae-3cca63dd9e20.png">  
+
+* sales:  
+Answer:  
+$ sudo firewall-cmd --permanent --zone=sales --add-service=https  
+<img width="499" alt="sales" src="https://user-images.githubusercontent.com/106919343/200883013-d0cf99b3-86c0-464f-b144-da9f9349b844.png">  
+
+* mail:  
+Answer:  
+$ sudo firewall-cmd --permanent --zone=mail --add-service=smtp  
+$ sudo firewall-cmd --permanent --zone=mail --add-service=pop3  
+<img width="457" alt="mail" src="https://user-images.githubusercontent.com/106919343/200883137-688c8ec4-04b0-47ad-8cea-0287d46e7a5e.png">  
+
+* What is the status of http, https, smtp and pop3?  
+Answer:   
+sudo firewall-cmd --zone=public --list-all  
+sudo firewall-cmd --zone=web --list-all   
+sudo firewall-cmd --zone=sales --list-all   
+sudo firewall-cmd --zone=mail --list-all   
+<img width="453" alt="public2" src="https://user-images.githubusercontent.com/106919343/200883485-1f1364ad-101f-4cf6-9c8d-9179abb8267b.png">  
+<img width="448" alt="web2" src="https://user-images.githubusercontent.com/106919343/200883553-a8346341-c1bc-498f-8983-01da8144fc5b.png">  
+<img width="449" alt="sales2" src="https://user-images.githubusercontent.com/106919343/200883593-3ce004c0-0ac7-49f9-866e-41d388ab8c0a.png">  
+<img width="450" alt="mail2" src="https://user-images.githubusercontent.com/106919343/200883636-4ee837f6-b8f2-4f9c-967f-8e1e6eb2b88c.png">  
+
+Add your adversaries to the drop zone.  
+* Run the command that will add all current and any future blacklisted IPs to the drop zone.  
+Answer:  
+$ sudo firewall-cmd --permanent --zone=drop --add-source=10.208.56.23  
+$ sudo firewall-cmd --permanent --zone=drop --add-source=135.95.103.76  
+$ sudo firewall-cmd --permanent --zone=drop --add-source=76.34.169.118  
+<img width="457" alt="drop" src="https://user-images.githubusercontent.com/106919343/200884336-91ffcaa8-afa4-4805-9719-ad2ca80ac4b6.png">  
+
+Make rules permanent, then reload them.  
+
+It's good practice to ensure that your firewalld installation remains nailed up and retains its services across reboots. This helps ensure that the network remains secure after unplanned outages such as power failures.  
+
+*  Run the command that reloads the firewalld configurations and writes it to memory:  
+Answer:  
+$ sudo firewall-cmd --runtime-to-permanent  
+sudo firewall-cmd --reload  
+<img width="394" alt="saving" src="https://user-images.githubusercontent.com/106919343/200884907-a09436be-a381-4289-96a0-c7d0519f78df.png">  
+
+View active zones.  
+Now, provide truncated listings of all currently active zones. This is a good time to verify your zone settings.  
+
+* Run the command that displays all zone services.  
+Answer:  
+$ sudo firewall-cmd --get-active-zones  
+<img width="425" alt="active zones" src="https://user-images.githubusercontent.com/106919343/200885248-1851fab1-bd1c-4cdc-b055-488e613f01eb.png">  
+ 
+Block an IP address.  
+
+* Use a rich-rule that blocks the IP address 138.138.0.3 on your public zone.  
+Answer:  
+$ sudo firewall-cmd --zone=public --add-rich-rule=’rule family=”ipv4” source address=”138.138.0.3” reject’  
+<img width="494" alt="rich rule" src="https://user-images.githubusercontent.com/106919343/200885412-2ddc7c6e-c5a8-49a7-abc7-ce47df8af0c5.png">  
+
+Block ping/ICMP requests.  
+Harden your network against ping scans by blocking icmp ehco replies.  
+
+* Run the command that blocks pings and icmp requests in your public zone.  
+Answer:  
+$ sudo firewall-cmd --zone=public --add-icmp-block=echo-reply --add-icmp-block=echo-request  
+<img width="481" alt="blocks" src="https://user-images.githubusercontent.com/106919343/200885615-6faf76e0-e763-4a55-ad27-9d48f832f793.png">  
+
+Rule check.  
+Now that you've set up your brand new firewalld installation, it's time to verify that all of the settings have taken effect.  
+
+* Run the command that lists all of the rule settings. Do one command at a time for each zone.  
+Answer:  
+$ sudo firewall-cmd --zone=public --list-all  
+$ sudo firewall-cmd --zone=sales --list-all  
+$ sudo firewall-cmd --zone=mail --list-all  
+$ sudo firewall-cmd --zone=web --list-all  
+$ sudo firewall-cmd --zone=drop --list-all  
+
+**Part 3: IDS, IPS, DiD and Firewalls**  
+
+Now, you’ll work on another lab. Before you start, complete the following review questions.  
+
+IDS vs. IPS Systems  
+
+1. Name and define two ways an IDS connects to a network.  
+Answer: Network tap: hardware device that provides access to the data flowing across a computer network  
+  
+   SPAN or port mirroring: sends a mirror image of all network data to another physical port, where packets can be captured and analyzed  
+
+2. Describe how an IPS connects to a network.  
+Answer: An IPS connects inline with the flow of data and is placed between the firewall and the network switch  
+
+3. What type of IDS compares patterns of traffic to predefined signatures and is unable to detect zero-day attacks?  
+Answer: Signature Based IDS  
+
+4. What type of IDS is beneficial for detecting all suspicious traffic that deviates from the well-known baseline and is excellent at detecting when an attacker probes or sweeps a network?  
+Answer: Anomaly based IDS  
+ 
+Defense in Depth  
+1. For each of the following scenarios, provide the layer of defense in depth that applies:  
+
+      a. A criminal hacker tailgates an employee through an exterior door into a secured facility, explaining that they forgot their badge at home.  
+
+         Answer:  Physical and administrative   
+
+      b. A zero-day goes undetected by antivirus software.  
+
+         Answer:  Technical–software  
+
+      c. A criminal successfully gains access to HR’s database.  
+
+         Answer: Technical–network  
+
+      d. A criminal hacker exploits a vulnerability within an operating system.  
+
+         Answer: Technical–network  
+
+      e. A hacktivist organization successfully performs a DDoS attack, taking down a government website.  
+
+         Answer: Technical–network  
+
+      f. Data is classified at the wrong classification level.  
+
+         Answer: Administrative-policies, procedures, and awareness  
+
+      g. A state-sponsored hacker group successfully firewalked an organization to produce a list of active services on an email server.  
+
+         Answer: Technical–network  
+
+2. Name one method of protecting data-at-rest from being readable on hard drive.  
+
+   Answer: Encrypting hard drives  
+
+3. Name one method of protecting data-in-transit.  
+
+   Answer: Transmit data through an encryption platform that integrates with your existing systems  
+
+4. What technology could provide law enforcement with the ability to track and recover a stolen laptop?  
+
+   Answer: Through the installation of hardware or software that will help identify and locate the laptop.  This could be done through GPS tracking chips or monitoring software installed on the laptop.  
+
+5. How could you prevent an attacker from booting a stolen laptop using an external hard drive?  
+
+   Answer: Encrypting your hard drive  
+
+Firewall Architectures and Methodologies  
+
+1. Which type of firewall verifies the three-way TCP handshake? TCP handshake checks are designed to ensure that session packets are from legitimate sources.  
+
+   Answer:  Circuit-level gateways  
+   It is also done by stateful inspection firewalls, proxy firewalls, and next-generation firewalls  
+
+2. Which type of firewall considers the connection as a whole? Meaning, instead of considering only individual packets, these firewalls consider whole streams of packets at one time.  
+
+   Answer: Stateful inspection firewalls  
+
+3. Which type of firewall intercepts all traffic prior to forwarding it to its final destination? In a sense, these firewalls act on behalf of the recipient by ensuring the traffic is safe prior to forwarding it.  
+
+   Answer: Proxy firewalls  
+
+4. Which type of firewall examines data within a packet as it progresses through a network interface by examining source and destination IP address, port number, and packet type—all without opening the packet to inspect its contents?  
+
+   Answer: Packet filtering firewalls  
+
+5. Which type of firewall filters solely based on source and destination MAC address?  
+
+   Answer: MAC layer filtering firewall  
+
+**Bonus Lab: “Green Eggs & SPAM”**  
+
+In this activity, you will target spam, uncover its whereabouts, and attempt to discover the intent of the attacker.  
+ 
+* You will assume the role of a junior security administrator working for the Department of Technology for the State of California.  
+ * As a junior administrator, your primary role is to perform the initial triage of alert data: the initial investigation and analysis followed by an escalation of high-priority alerts to senior incident handlers for further review.  
+ * You will work as part of a Computer and Incident Response Team (CIRT), responsible for compiling threat intelligence as part of your incident report.  
+
+Threat Intelligence Card   
+
+Locate the indicator of attack in Sguil based off of the following:  
+
+* Source IP/port: 188.124.9.56:80  
+* Destination address/port: 192.168.3.35:1035  
+* Event message: ET TROJAN JS/Nemucod.M.gen downloading EXE payload  
+
+Answer the following questions:  
+
+1. What was the indicator of an attack? (Hint: What do the details reveal?)   
+
+   Answer: Msg: ET TROJAN JS/Nemucod.M.gen downloading EXE payload  
+   downloads and runs additional malicious files on a system
+
+2. What was the adversarial motivation (purpose of the attack)?  
+
+   Answer: Info stealers--obtain personal information and more recently ransomware  
+
+3. Describe observations and indicators that may be related to the perpetrators of the intrusion. Categorize your insights according to the appropriate stage of the cyber kill chain, as structured in the following table:  
+
+<img width="324" alt="table" src="https://user-images.githubusercontent.com/106919343/200889180-09e074f2-286d-449b-8464-d953355f40e2.png">  
+
+4. What are your recommended mitigation strategies?  
+
+   Answer: Using an intrusion detection system which will alert when there’s been an attempt to download a potential malware file.  As well as putting in place an      intrusion prevention system which will not only alert but respond to attacks.  
+
+5. List your third-party references.  
+
+https://www.f-secure.com/v-descs/trojan-downloader_js_nemucod.shtml  
+https://www.cisecurity.org/insights/blog/malware-analysis-report-nemucod-ransomware  
+
+
+
 
 
 
